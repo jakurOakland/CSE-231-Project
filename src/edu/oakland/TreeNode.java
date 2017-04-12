@@ -1,17 +1,22 @@
 package edu.oakland;
 
 /**
- * Created by Gaming on 3/9/2017.
+ * Created by Justin Kur on 3/9/2017.
  */
 public class TreeNode extends Person {
 
     private TreeNode leftChild;
     private TreeNode rightChild;
 
+    /**
+     * Creates a TreeNode using the parameters for defining a person
+     * @param name Person's name
+     * @param telephoneNumber Person's telephone number
+     * @param address Person's address
+     */
     public TreeNode(String name, String telephoneNumber, String address) {
-        this.name = name;
-        this.telephoneNumber = telephoneNumber;
-        this.address = address;
+        super(name, telephoneNumber, address); //Call to parent constructor
+        //Children are initialized to null
         leftChild = null;
         rightChild = null;
     }

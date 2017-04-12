@@ -1,14 +1,24 @@
 package edu.oakland;
 
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+
 /**
  * Created by Justin Kur on 3/9/2017.
  */
-public class BinarySearchTree {
+public class BinarySearchTree implements DataStructure {
 
     private TreeNode root;
+    private int elements;
 
+    /**
+     * Initializes the root to null and the number of elements to 0
+     */
     public BinarySearchTree() {
         root = null;
+        elements = 0;
     }
 
     /**
@@ -27,6 +37,7 @@ public class BinarySearchTree {
      */
     public void insert(TreeNode node) {
         //First check if the tree is empty
+        elements++;
         if(root == null) {
             root = node;
             return;
@@ -54,7 +65,7 @@ public class BinarySearchTree {
     /**
      * Retrieves the TreeNode containing the name entered, or null if it is not found
      * @param name Name of the person to be retrieved from the tree
-     * @return
+     * @return The TreeNode that was found
      */
     public TreeNode retrieve(String name) {
         TreeNode nptr = root;
@@ -71,6 +82,32 @@ public class BinarySearchTree {
             }
         }
         return null;
+    }
+
+    /**
+     * Updates the fields of a Person only if that Person is already present in the data structure
+     * @param name Name of the person
+     * @param telephoneNumber Their new telephone number
+     * @param address Their new address
+     * @return True if the update was successful, false if no node matching the name was found
+     */
+    public boolean update(String name, String telephoneNumber, String address) {
+        TreeNode nptr = root;
+
+        while(nptr != null) {
+            if(name.hashCode() < nptr.getName().hashCode()) {
+                nptr = nptr.getLeftChild(); //There was no hashcode match, so we simply go left
+            }
+            else {
+                if(nptr.getName().equals(name)) { //Check to see if this is our node
+                    nptr.setTelephoneNumber(telephoneNumber);
+                    nptr.setAddress(address);
+                    return true; //Updated successfully
+                }
+                nptr = nptr.getRightChild(); //If it isn't, go right
+            }
+        }
+        return false; //Node not found
     }
 
     /**
@@ -122,14 +159,15 @@ public class BinarySearchTree {
                 else {
                     root = placeHolder; //If the root is the target of the deletion, the successor becomes the root
                 }
+                elements--;
                 return true; //Indicating successful deletion
             }
             //Traversing through the tree
-            if(name.hashCode() < nptr.getName().hashCode()) {
+            if(name.hashCode() < nptr.getName().hashCode()) { //Go left
                 parent = nptr;
                 nptr = nptr.getLeftChild();
             }
-            else {
+            else { //Go right
                 parent = nptr;
                 nptr = nptr.getRightChild();
             }
@@ -137,14 +175,92 @@ public class BinarySearchTree {
         return false; //Indicating that the no node with that name was found
     }
 
+    /**
+     * Gets a node's successor and its parent.
+     * @param node Node whose successor is wanted
+     * @return An array containing the successor's parent and the successor in that order
+     */
     private TreeNode[] successorAndParent(TreeNode node) {
         //This will only be called when the node has two children, so parent and nptr should never be null
         TreeNode parent = node;
         TreeNode nptr = node.getRightChild();
+        //Iterate through until the successor is found
         while(nptr.getLeftChild() != null) {
             parent = nptr;
             nptr = nptr.getLeftChild();
         }
-        return new TreeNode[]{parent, nptr};
+        return new TreeNode[]{parent, nptr}; //Array containing just the parent of the successor and the successor
+    }
+
+    /**
+     * Prints the inorder traversal of the tree
+     */
+    public void display() {
+        inOrderTraverse(root);
+    }
+
+    /**
+     * Prints an inorder traversal of the tree, used for printing to the command line
+     * @param node Upon first call, this should be the root
+     */
+    private void inOrderTraverse(TreeNode node) {
+        if(node != null) {
+            inOrderTraverse(node.getLeftChild());
+            System.out.println(node.getName() + " (" + node.getAddress() + ") " + node.getTelephoneNumber());
+            inOrderTraverse(node.getRightChild());
+        }
+    }
+    /**
+     * Writes a representation of the data structure to the output file
+     */
+    public void writeToFile() {
+        class Traversal {
+            private Writer writer;
+
+            private Traversal() {
+                try {
+                    writer = new BufferedWriter(new OutputStreamWriter(
+                            new FileOutputStream(Main.outputFileName), "utf-8"));
+                }
+                catch(Exception e) {
+                    System.out.println("Error initializing file writer");
+                }
+            }
+            private void traverseAndWrite(TreeNode node) throws java.io.IOException {
+                if(node != null) {
+                    traverseAndWrite(node.getLeftChild());
+                    writer.write(node.name + "," + node.telephoneNumber + "," + node.address + "\n");
+                    traverseAndWrite(node.getRightChild());
+                }
+            }
+        }
+        Traversal t = new Traversal();
+        try {
+            if(t.writer != null) {
+                t.traverseAndWrite(root);
+                t.writer.close();
+            }
+            else {
+                System.out.println("Error: Writer was not properly initialized");
+            }
+        } catch(java.io.IOException e) {
+            System.out.println("Error writing to file");
+        }
+    }
+
+    /**
+     * Gets the name of the data structure being used
+     * @return The name of the data structure
+     */
+    public String getStructureName() {
+        return "Binary Search Tree";
+    }
+
+    /**
+     * Used to check if the user should be warned about verbose printing
+     * @return True if the user should be warned, false if not
+     */
+    public boolean printWarning() {
+        return elements >= 1000;
     }
 }

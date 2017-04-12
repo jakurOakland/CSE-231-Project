@@ -10,9 +10,7 @@ public class PersonNode extends Person {
     private PersonNode next;
 
     public PersonNode(String name, String telephoneNumber, String address) {
-        this.name = name;
-        this.telephoneNumber = telephoneNumber;
-        this.address = address;
+        super(name, telephoneNumber, address);
         this.next = null;
     }
 

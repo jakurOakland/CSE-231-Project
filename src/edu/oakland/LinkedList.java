@@ -4,9 +4,7 @@ package edu.oakland;
  * Created by Justin Kur on 3/6/2017.
  */
 public class LinkedList {
-    /*
-    Singly Linked list implementation
-     */
+
     private PersonNode head;
 
     /**
@@ -67,12 +65,13 @@ public class LinkedList {
     /**
      * Removes a PersonNode matching a given name string
      * @param name The name string to search for
+     * @return True if the node was found and removed, false if the node was not found
      */
-    public void remove(String name) {
+    public boolean remove(String name) {
         //Special action is taken for the head, because it has no previous node to handle
         if(head.getName().equals(name)) {
             head = head.getNext();
-            return;
+            return true; //Node was successfully removed
         }
         //The head has already been checked
         PersonNode previous = head;
@@ -85,10 +84,16 @@ public class LinkedList {
                 the current node from the list
                  */
                 previous.setNext(nptr.getNext());
-                return;
+                return true;
             }
             previous = nptr;
             nptr = nptr.getNext();
         }
+        return false; //No matching node was found
     }
+
+    public PersonNode getHead() {
+        return head;
+    }
+
 }

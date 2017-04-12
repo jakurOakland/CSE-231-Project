@@ -12,8 +12,14 @@ public class Person {
     protected String telephoneNumber;
     protected String address;
 
+    public Person(String name, String telephoneNumber, String address) {
+        this.name = name;
+        this.telephoneNumber = telephoneNumber;
+        this.address = address;
+    }
+
     public String toString() {
-        return name + " " + telephoneNumber + " " + address;
+        return name + " (" + address + ") " + telephoneNumber;
     }
 
     public String getName() {
@@ -28,7 +34,13 @@ public class Person {
         return address;
     }
 
+
+    public void setTelephoneNumber(String telephoneNumber) {
+        this.telephoneNumber = telephoneNumber;
+    }
+
     public void setAddress(String address) {
         this.address = address;
     }
+
 }
